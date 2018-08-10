@@ -1,0 +1,7 @@
+[package]
+name = "mykv"
+version = "0.1.0"
+authors = ["leoppro"]
+
+[dependencies]
+byteorder = "1.2.4"
