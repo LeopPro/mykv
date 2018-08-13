@@ -1,13 +1,9 @@
 use std::collections::HashMap;
-use bytes::Bytes;
-use bincode::serialize;
-use std::fs::File;
 use std::fs::OpenOptions;
-use bincode::deserialize;
 use std::path::Path;
 use std::error::Error;
-use std::io::Write;
-use std::io::Read;
+use std::io::{Read, Write};
+use bincode::{serialize, deserialize};
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct KvPool {
@@ -46,7 +42,7 @@ impl KvPool {
     pub fn dump_to_file(&self) -> Result<(), Box<Error>> {
         let mut dump_file = OpenOptions::new().read(false).write(true)
             .create(true).append(false).open(&self.dump_file_path)?;
-        let mut dump_bytes = serialize(self)?;
+        let dump_bytes = serialize(self)?;
         dump_file.write_all(&dump_bytes)?;
         dump_file.flush()?;
         dump_file.sync_all()?;
@@ -71,7 +67,6 @@ impl KvPool {
 #[cfg(test)]
 mod tests {
     use storage::kv_pool::KvPool;
-    use bytes::Bytes;
 
     #[test]
     fn test() {
@@ -85,7 +80,7 @@ mod tests {
         }
         kv_pool.dump_to_file().unwrap();
 
-        let mut kv_pool2 = KvPool::init("./db.dump").unwrap();
+        let kv_pool2 = KvPool::init("./db.dump").unwrap();
         assert_eq!(kv_pool, kv_pool2);
     }
 }

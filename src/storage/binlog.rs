@@ -1,16 +1,8 @@
-use std::fs::OpenOptions;
-use std::fs::File;
-use std::io::Write;
-use byteorder::{LittleEndian, WriteBytesExt};
 use std::error::Error;
 use common::Directive;
-use bincode::{serialize, deserialize};
-use std::io::Cursor;
-use std::io::SeekFrom;
-use std::io::Seek;
-use std::io::Read;
-use byteorder::ReadBytesExt;
-use std::io::ErrorKind;
+use std::fs::{OpenOptions, File};
+use byteorder::{LittleEndian, ReadBytesExt};
+use std::io::{Write, Read, Cursor, SeekFrom, Seek, ErrorKind};
 
 pub struct BinLogger {
     log_file: File,
@@ -32,15 +24,15 @@ impl BinLogger {
 
     pub fn iter_after_index<F>(&mut self, index: u64, mut handler: F) where F: FnMut(Directive) {
         let mut directice_length_bytes = [0; 8];
-        self.log_file.seek(SeekFrom::Start(0));
-        while true {
+        self.log_file.seek(SeekFrom::Start(0)).unwrap();
+        loop {
             match self.log_file.read_exact(&mut directice_length_bytes) {
                 Ok(_) => (),
                 Err(error) => {
                     if error.kind() == ErrorKind::UnexpectedEof {
                         break;
                     } else {
-                        panic!("Error")
+                        panic!("Read BinLog Error,{}", error);
                     }
                 }
             }
@@ -53,10 +45,10 @@ impl BinLogger {
                 handler(directive);
             }
         }
-        self.log_file.seek(SeekFrom::End(0));
+        self.log_file.seek(SeekFrom::End(0)).unwrap();
     }
 
-    pub fn switch(&mut self) {}
+    // pub fn switch(&mut self) {}
 }
 
 #[cfg(test)]
@@ -75,7 +67,7 @@ mod tests {
                                         vec![1 as u8, 2, 3], v);
 
         let mut bin_logger = BinLogger::init("./test");
-        bin_logger.log(&directive);
+        bin_logger.log(&directive).unwrap();
     }
 
     #[test]

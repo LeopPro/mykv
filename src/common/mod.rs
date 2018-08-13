@@ -1,12 +1,8 @@
-use bytes::Bytes;
-use bincode::serialize;
 use std::error::Error;
-use byteorder::LittleEndian;
-use byteorder::WriteBytesExt;
-use byteorder::ReadBytesExt;
 use std::io::Cursor;
-use bincode::deserialize;
-use std::io::Read;
+use bincode::{serialize, deserialize};
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub enum DirectiveAction {
@@ -80,7 +76,6 @@ impl Directive {
 mod tests {
     use common::Directive;
     use common::DirectiveAction;
-    use bytes::Bytes;
 
     #[test]
     fn directive_test() {

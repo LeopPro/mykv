@@ -47,7 +47,10 @@ impl Storage {
     fn start_dump_thread(receiver: Receiver<KvPool>) {
         thread::spawn(move || {
             for kv_pool in receiver {
-                kv_pool.dump_to_file();
+                match kv_pool.dump_to_file(){
+                    Ok(_)=>{}
+                    Err(error)=>error!("dump kv pool error:{}",error)
+                };
             }
         });
     }
