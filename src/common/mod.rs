@@ -72,6 +72,10 @@ impl Directive {
     }
 }
 
+pub struct Heartbeat {
+    directives: Vec<Directive>,
+}
+
 #[cfg(test)]
 mod tests {
     use common::Directive;
